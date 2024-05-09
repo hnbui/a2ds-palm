@@ -46,6 +46,7 @@ if __name__ == "__main__":
     # training
     model = UNet(config.NUM_CHANNELS, config.NUM_CLASSES).to(config.DEVICE)
     # summary(model, (3, 512, 512))
+    
     loss_f = BCEWithLogitsLoss()
     optimizer = Adam(model.parameters(), lr=config.INIT_LR)
 
@@ -66,56 +67,56 @@ if __name__ == "__main__":
         for (i, (x, y)) in enumerate(train_loader):
             (x, y) = (x.to(config.DEVICE), y.to(config.DEVICE))
 
-#             # perform forward pass
-#             pred = model(x)
-#             loss = loss_f(pred, y)
+            # perform forward pass
+            pred = model(x)
+            loss = loss_f(pred, y)
 
-#             # perform back propagation and optimize weights
-#             optimizer.zero_grad()
-#             loss.backward()
-#             optimizer.step()
+            # perform back propagation and optimize weights
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
 
-#             train_loss += loss
+            train_loss += loss
 
-#         # eval mode
-#         with torch.no_grad():
-#             model.eval()
+        # eval mode
+        with torch.no_grad():
+            model.eval()
 
-#             for (i, (x, y)) in enumerate(val_loader):
-#                 (x, y) = (x.to(config.DEVICE), y.to(config.DEVICE))
+            for (i, (x, y)) in enumerate(val_loader):
+                (x, y) = (x.to(config.DEVICE), y.to(config.DEVICE))
 
-#                 pred = model(x)
-#                 loss = loss_f(pred, y)
-#                 val_loss += loss
+                pred = model(x)
+                loss = loss_f(pred, y)
+                val_loss += loss
 
-#        # calculate average losses
-#         avr_train_loss = train_loss / train_steps 
-#         avr_val_loss = val_loss / val_steps
+       # calculate average losses
+        avr_train_loss = train_loss / train_steps 
+        avr_val_loss = val_loss / val_steps
 
-#         #update training hostory
-#         H["train_loss"].append(avr_train_loss.cpu().detach().numpy())
-#         H["val_loss"].append(avr_val_loss.cpu().detach().numpy())
+        #update training hostory
+        H["train_loss"].append(avr_train_loss.cpu().detach().numpy())
+        H["val_loss"].append(avr_val_loss.cpu().detach().numpy())
 
-#         # print the model training and validation information
-#         print("[INFO] EPOCH: {}/{}".format(e + 1, config.NUM_EPOCHS))
-#         print("Train loss: {:.6f}, Validation loss: {:.4f}".format(avr_train_loss, avr_val_loss))
+        # print the model training and validation information
+        print("[INFO] EPOCH: {}/{}".format(e + 1, config.NUM_EPOCHS))
+        print("Train loss: {:.6f}, Validation loss: {:.4f}".format(avr_train_loss, avr_val_loss))
 
-# # display the total time needed to perform the training
-# end_time = time.time()
-# print("[INFO] total time taken to train the model: {:.2f}s".format(end_time - start_time))
+# display the total time needed to perform the training
+end_time = time.time()
+print("[INFO] total time taken to train the model: {:.2f}s".format(end_time - start_time))
 
-# # plot the training loss
-# plt.style.use("ggplot")
-# plt.figure()
-# plt.plot(H["train_loss"], label="train_loss")
-# plt.plot(H["val_loss"], label="val_loss")
-# plt.title("Training Loss on Dataset")
-# plt.xlabel("Epoch #")
-# plt.ylabel("Loss")
-# plt.legend(loc="lower left")
-# plt.savefig(config.PLOT_PATH)
+# plot the training loss
+plt.style.use("ggplot")
+plt.figure()
+plt.plot(H["train_loss"], label="train_loss")
+plt.plot(H["val_loss"], label="val_loss")
+plt.title("Training Loss on Dataset")
+plt.xlabel("Epoch #")
+plt.ylabel("Loss")
+plt.legend(loc="lower left")
+plt.savefig(config.PLOT_PATH)
 
-# # serialize the model to disk
-# torch.save(model, config.MODEL_PATH)
+# serialize the model to disk
+torch.save(model, config.MODEL_PATH)
 
 
